@@ -17,7 +17,7 @@ This backend exposes an API for **early tuberculosis (TB) risk screening** using
 ---
 
 ## Project Structure
-
+```
 backend/
 ├── app.py
 ├── requirements.txt
@@ -26,7 +26,7 @@ backend/
 │ └── tb_risk_new_logic_model.joblib
 └── data/
 └── hospitals.csv
-
+```
 
 ---
 
@@ -66,7 +66,7 @@ http://127.0.0.1:5000
 - 12 binary symptoms (`0` or `1`)
 - Optional district and state for hospital recommendations
 
-```json
+```
 {
   "symptom_1": 0,
   "symptom_2": 1,
@@ -83,14 +83,14 @@ http://127.0.0.1:5000
   "district": "howrah",
   "state": "west bengal"
 }
-
+```
 
 
 ---
 
 ## Response Format (JSON)
 
-```json
+```
 {
   "risk_level": "Medium",
   "confidence_percent": 50.12,
@@ -99,7 +99,7 @@ http://127.0.0.1:5000
 }
 
 
-
+```
 ---
 
 ## Notes
