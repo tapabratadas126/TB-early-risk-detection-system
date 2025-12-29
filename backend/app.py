@@ -2,14 +2,28 @@ from flask import Flask, request, jsonify
 import joblib
 import numpy as np
 import csv
+import logging
 
+# =========================
+# App Setup
+# =========================
 app = Flask(__name__)
 
+logging.basicConfig(level=logging.INFO)
+
+# NOTE:
+# The /predict response schema is frozen.
+# Do NOT modify response keys without frontend update.
+
 # =========================
-# Load ML Model
+# Load ML Model (Fail-safe)
 # =========================
 MODEL_PATH = "model/tb_risk_new_logic_model.joblib"
-model = joblib.load(MODEL_PATH)
+
+try:
+    model = joblib.load(MODEL_PATH)
+except Exception as e:
+    raise RuntimeError("Failed to load ML model") from e
 
 # =========================
 # Constants
@@ -42,7 +56,7 @@ DISCLAIMER = (
 )
 
 # =========================
-# Utility Functions
+# Helpers
 # =========================
 def clean_text(value, max_len=50):
     if not isinstance(value, str):
@@ -53,6 +67,7 @@ def clean_text(value, max_len=50):
 # Load Hospital Dataset
 # =========================
 HOSPITALS = []
+
 with open("data/hospitals.csv", newline="", encoding="utf-8") as f:
     reader = csv.DictReader(f)
     for row in reader:
@@ -77,8 +92,17 @@ def recommend_hospitals(district, state, limit=5):
 def home():
     return {"status": "Backend running"}
 
+@app.route("/health")
+def health():
+    return {"status": "ok"}
+
 @app.route("/predict", methods=["POST"])
 def predict():
+    logging.info("Predict endpoint hit")
+
+    if not request.is_json:
+        return jsonify({"error": "Content-Type must be application/json"}), 400
+
     try:
         data = request.get_json(silent=True)
         if not data:
@@ -117,12 +141,11 @@ def predict():
         })
 
     except Exception:
+        logging.exception("Unhandled server error")
         return jsonify({
             "error": "Server error. Please try again later.",
             "disclaimer": DISCLAIMER
         }), 500
-
-
 
 # =========================
 # Run App
