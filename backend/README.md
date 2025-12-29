@@ -33,25 +33,25 @@ backend/
 ## Running Locally
 
 ### 1. Create and activate virtual environment
-
+```
 python -m venv venv
 venv\Scripts\activate
-
+```
 
 ### 2. Install dependencies
-
+```
 pip install -r requirements.txt
-
+```
 
 ### 3. Start the server
-
+```
 python app.py
-
+```
 
 Server runs at:
-
+```
 http://127.0.0.1:5000
-
+```
 
 ---
 
@@ -114,17 +114,17 @@ http://127.0.0.1:5000
 ## Error Handling
 
 ### 400 – Invalid Input
-
+```
 { "error": "Missing feature: symptom_3" }
-
+```
 
 ### 500 – Server Error
-
+```
 {
 "error": "Server error. Please try again later.",
 "disclaimer": "This system provides early TB risk screening only."
 }
-
+```
 ---
 
 ## Hospital Recommendation Logic
