@@ -4,12 +4,12 @@ import numpy as np
 import csv
 import logging
 import os
+from collections import OrderedDict
 
 # =========================
 # App Setup
 # =========================
 app = Flask(__name__)
-
 logging.basicConfig(level=logging.INFO)
 
 # NOTE:
@@ -134,24 +134,25 @@ def predict():
         if risk_level in ("Medium", "High") and district and state:
             hospitals = recommend_hospitals(district, state)
 
-        return jsonify({
-            "risk_level": risk_level,
-            "confidence_percent": round(confidence, 2),
-            "hospitals": hospitals,
-            "disclaimer": DISCLAIMER
-        })
+        # Ordered response (for demo & readability)
+        response = OrderedDict()
+        response["risk_level"] = risk_level
+        response["confidence_percent"] = round(confidence, 2)
+        response["hospitals"] = hospitals
+        response["disclaimer"] = DISCLAIMER
+
+        return jsonify(response)
 
     except Exception:
         logging.exception("Unhandled server error")
-        return jsonify({
-            "error": "Server error. Please try again later.",
-            "disclaimer": DISCLAIMER
-        }), 500
+        error_response = OrderedDict()
+        error_response["error"] = "Server error. Please try again later."
+        error_response["disclaimer"] = DISCLAIMER
+        return jsonify(error_response), 500
 
 # =========================
-# Run App
+# Run App (Render-compatible)
 # =========================
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=False)
-
